@@ -8,28 +8,16 @@ app = FastAPI()
 BANDS = [
     {'id': 1, 'name': 'The Kinks', 'genre': 'Rock'},
     {'id': "2", 'name': 'Aphex Twin', 'genre': 'Electronic'},
-    {'id': 3, 'name': 'Slowdive', 'genre': 'metal', 'albums':[
+    {'id': 3, 'name': 'Slowdive', 'genre': 'Shoegaze', 'albums':[
         {'title': "Masters", 'release_date':'1972-12-12'}]},
     {'id': 4, 'name': 'Wu-Tang Clan', 'genre': 'Hip-Hop'},  
 ]
 
 @app.get('/bands')
-async def bands(  #set defalut value to None otherwise passing parameter is necessary
-    genre:GenreURLChoices | None = None,
-    has_albums:bool = False
-    )->List[Band]:
-    
-    bandList = [Band(**b) for b in BANDS]
-    
-    if genre:
-        bandList =  [
-            b for b in bandList if b.genre.lower()==genre.value.lower()
-        ]
-    if has_albums:
-        bandList = [
-            b for b in bandList if len(b.albums)>0
-        ]
-    return bandList
+async def bands()->List[Band]:
+    return [
+        Band(**band) for band in BANDS
+    ]
 @app.get('/bands/{band_id}')
 async def band(band_id:int)->Band:
     band = next((Band(**b) for b in BANDS if str(b['id'])==str(band_id)),None)
